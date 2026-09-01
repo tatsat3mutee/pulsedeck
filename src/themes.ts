@@ -491,6 +491,33 @@ const SPECS: Record<string, ThemeSpec> = {
     decor: "waves",
     hljs: `${HL}atom-one-light.min.css`,
   },
+
+  // ── Enterprise ─────────────────────────────────────────────────────────
+  carbon: {
+    label: "ibm carbon",
+    mood: "dark",
+    blurb: "IBM Carbon Design System. Blue 60 on Gray 100, gridded and precise.",
+    // Neutrals are IBM's public Carbon Gray ramp (Black 100 through Gray 10),
+    // the same scale the Gray 100 ("g100") theme is built from.
+    neutrals: {
+      crust: "#000000", mantle: "#161616", base: "#262626",
+      surface0: "#393939", surface1: "#525252", surface2: "#6f6f6f",
+      overlay0: "#8d8d8d", overlay1: "#a8a8a8",
+      subtext0: "#c6c6c6", subtext1: "#e0e0e0", text: "#f4f4f4",
+    },
+    // Accents pull from Carbon's public color tokens, clustered in the
+    // blue/cyan/teal family with the rest of the categorical palette filled
+    // in around it so mark, bullets, and table headers stay legible.
+    accents: {
+      lavender: "#a56eff", blue: "#0f62fe", sapphire: "#1192e8", sky: "#33b1ff",
+      teal: "#007d79", green: "#42be65", yellow: "#f1c21b", peach: "#ff832b",
+      red: "#fa4d56", mauve: "#8a3ffc", pink: "#ff7eb6",
+    },
+    roles: { accent: "blue", accent2: "sky", accent3: "teal" },
+    type: { display: "plexSans", body: "plexSans", mono: "plexMono", weight: 600, tracking: "-0.02em" },
+    decor: "grid",
+    hljs: `${HL}atom-one-dark.min.css`,
+  },
 };
 
 /**
@@ -498,7 +525,7 @@ const SPECS: Record<string, ThemeSpec> = {
  * calmest to loudest.
  */
 export const THEME_IDS = [
-  "midnight", "tokyo", "nord", "dracula", "gruvbox", "rosepine", "forest", "neon",
+  "midnight", "tokyo", "nord", "dracula", "gruvbox", "rosepine", "forest", "neon", "carbon",
   "daylight", "arctic", "solarized", "paper", "rosequartz", "swiss",
 ] as const;
 

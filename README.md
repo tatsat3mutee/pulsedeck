@@ -1,10 +1,12 @@
-# deckrun
+# pulsedeck
 
 Write slides in Markdown or bring a self-contained HTML document, run a local server, and present either in the browser.
 
+> `pulsedeck` is a fork of [`deckrun`](https://github.com/arpitbbhayani/deckrun) by Arpit Bhayani. The core engine — parsing, theming, presenting, PDF export, and the local-only server — is untouched; this fork adds an `ibm carbon` theme, a `devpulse`-to-deck exporter, a deck-linting CI workflow, and a Claude Code skill for turning documents into decks. See [`CLAUDE.md`](CLAUDE.md) for what's added and why.
+
 - **Two formats** - Markdown decks with slide-by-slide presentation, or self-contained HTML documents with continuous scrolling
 - **Live editor** - edit alongside a live preview, with autosave and a library of all your decks and docs
-- **14 themes** - unique palettes, typography, animated backdrops, four type sizes, and customizable heading and body fonts
+- **15 themes** - unique palettes, typography, animated backdrops, four type sizes, and customizable heading and body fonts
 - **Templates and motion** - four composition templates and five transitions, switchable without touching the Markdown
 - **Technical content** - KaTeX equations and Mermaid diagrams in preview, presentation, HTML, and PDF
 - **Incremental reveals** - step through bullets, prose, equations, code, or diagrams without duplicating slides
@@ -18,10 +20,10 @@ Write slides in Markdown or bring a self-contained HTML document, run a local se
 
 ## Quick start
 
-Check out the sample Markdown source in [`examples/example-2.md`](https://raw.githubusercontent.com/arpitbbhayani/deckrun/refs/heads/master/examples/example-2.md) and load it directly to see how `deckrun` presents it (no installation required):
+Check out the sample Markdown source in [`examples/example-2.md`](https://raw.githubusercontent.com/arpitbbhayani/deckrun/refs/heads/master/examples/example-2.md) and load it directly to see how `pulsedeck` presents it (no installation required):
 
 ```bash
-npx deckrun
+npx pulsedeck
 ```
 
 ## Installation
@@ -29,57 +31,57 @@ npx deckrun
 Install globally from npm:
 
 ```bash
-npm install -g deckrun
+npm install -g pulsedeck
 ```
 
 Or run it without installing:
 
 ```bash
-npx deckrun              # open the editor
-npx deckrun slides.md    # present a local file
-npx deckrun <url>        # present a public Markdown or HTML URL
+npx pulsedeck              # open the editor
+npx pulsedeck slides.md    # present a local file
+npx pulsedeck <url>        # present a public Markdown or HTML URL
 ```
 
 ## Usage
 
 ```bash
 # Write a new deck in the built-in editor
-deckrun
+pulsedeck
 
 # Serve on the default port 7890 and open the browser
-deckrun slides.md
+pulsedeck slides.md
 
 # Present a self-contained HTML page instead of a Markdown deck
-deckrun page.html
+pulsedeck page.html
 
 # Serve on a custom port
-deckrun slides.md -p 3000
+pulsedeck slides.md -p 3000
 
 # Start the server without opening a browser tab
-deckrun slides.md --no-open
+pulsedeck slides.md --no-open
 
 # Show a launch overlay that enters fullscreen on the first key or click
-deckrun slides.md --fullscreen
+pulsedeck slides.md --fullscreen
 
-# Pick one of the fourteen themes, at one of four type sizes
-deckrun slides.md --theme paper
-deckrun slides.md --theme paper --size xl
+# Pick one of the fifteen themes, at one of four type sizes
+pulsedeck slides.md --theme paper
+pulsedeck slides.md --theme paper --size xl
 
 # Or set the two faces yourself
-deckrun slides.md --theme tokyo --head-font playfair --body-font lora
+pulsedeck slides.md --theme tokyo --head-font playfair --body-font lora
 
 # Recompose the same Markdown and choose how slides move
-deckrun slides.md --template editorial --transition fade
+pulsedeck slides.md --template editorial --transition fade
 
 # Check one or more decks before presenting or committing them
-deckrun lint slides.md
-deckrun lint talks/*.md --format json
+pulsedeck lint slides.md
+pulsedeck lint talks/*.md --format json
 
-deckrun --list-themes
-deckrun --list-sizes
-deckrun --list-fonts
-deckrun --list-templates
-deckrun --list-transitions
+pulsedeck --list-themes
+pulsedeck --list-sizes
+pulsedeck --list-fonts
+pulsedeck --list-templates
+pulsedeck --list-transitions
 ```
 
 On start, the CLI prints the slide count and the local URL:
@@ -107,7 +109,7 @@ The server binds to `127.0.0.1` only, so the deck is never exposed on the networ
 | `-p, --port <number>` | `7890`  | Port to serve the presentation on                      |
 | `--no-open`           | `false` | Start the HTTP server without opening the browser      |
 | `--fullscreen`        | `false` | Prompt to enter fullscreen on the first key or click   |
-| `--theme <name>`      | `nord`     | Any of the fourteen themes, by id                   |
+| `--theme <name>`      | `nord`     | Any of the fifteen themes, by id                   |
 | `--size <name>`       | `m`     | Type size: `s`, `m`, `l`, or `xl`                       |
 | `--head-font <name>`  |         | Override the theme's heading and title face             |
 | `--body-font <name>`  |         | Override the theme's body face                          |
@@ -125,16 +127,16 @@ An unknown `--theme`, `--size`, or font is an error rather than a silent fallbac
 
 `--size`, `--head-font`, and `--body-font` apply to Markdown decks only. An HTML doc brings its own typography; passing any of them alongside an `.html`/`.htm` file prints a notice and is otherwise ignored.
 
-### `deckrun lint`
+### `pulsedeck lint`
 
 The lint command performs fast, browser-free checks and reports the source
 line, slide number, severity, and rule id for each problem:
 
 ```bash
-deckrun lint slides.md
-deckrun lint intro.md architecture.md
-deckrun lint slides.md --format json
-deckrun lint slides.md --max-warnings -1
+pulsedeck lint slides.md
+pulsedeck lint intro.md architecture.md
+pulsedeck lint slides.md --format json
+pulsedeck lint slides.md --max-warnings -1
 ```
 
 It catches empty decks/slides, unclosed code fences and display math, untagged
@@ -146,16 +148,16 @@ number of warnings. Pass `-` as the file to lint standard input.
 
 ## The editor
 
-Run `deckrun` with no file and it serves an editor instead of a deck. A deck already in this browser resumes with no extra step, exactly as before. The first time you run it — or any time you choose "new" from the library with nothing open yet — you land on a start screen instead: a new Markdown deck, a new or uploaded HTML doc, or the library. Pick Markdown and you get the usual pane pair, Markdown on the left and the live deck on the right, plus a library of every deck and doc you have written.
+Run `pulsedeck` with no file and it serves an editor instead of a deck. A deck already in this browser resumes with no extra step, exactly as before. The first time you run it — or any time you choose "new" from the library with nothing open yet — you land on a start screen instead: a new Markdown deck, a new or uploaded HTML doc, or the library. Pick Markdown and you get the usual pane pair, Markdown on the left and the live deck on the right, plus a library of every deck and doc you have written.
 
 ```bash
-deckrun
-deckrun --theme paper --size l   # start the editor in a given look
-deckrun --head-font syne         # and a face of your own
-deckrun -p 3000            # editor on another port
+pulsedeck
+pulsedeck --theme paper --size l   # start the editor in a given look
+pulsedeck --head-font syne         # and a face of your own
+pulsedeck -p 3000            # editor on another port
 ```
 
-The preview is not an approximation. Every keystroke is parsed by the same parser the CLI uses, and the slides render inside an iframe fixed at 1600x900 with the deck's own stylesheet. Pressing present POSTs the Markdown back to the server, which builds the deck exactly as `deckrun file.md` would. The output is byte-identical.
+The preview is not an approximation. Every keystroke is parsed by the same parser the CLI uses, and the slides render inside an iframe fixed at 1600x900 with the deck's own stylesheet. Pressing present POSTs the Markdown back to the server, which builds the deck exactly as `pulsedeck file.md` would. The output is byte-identical.
 
 ### The two bars
 
@@ -204,21 +206,21 @@ Markdown remains byte-for-byte unchanged.
 
 ### Images
 
-Images are referenced by path, exactly as in a file-based deck. The editor serves the directory you launched in, so launch `deckrun` next to your diagrams and `![Diagram](diagram.png "right")` resolves.
+Images are referenced by path, exactly as in a file-based deck. The editor serves the directory you launched in, so launch `pulsedeck` next to your diagrams and `![Diagram](diagram.png "right")` resolves.
 
 The guide and the palette carry every directive, so the layouts are one keystroke away rather than something to remember. Images are not uploaded or embedded: the editor keeps Markdown, and the files stay on disk where you put them.
 
 ### HTML documents
 
-Alongside Markdown decks, deckrun can present a second kind of document: a self-contained HTML page with no slide boundaries — a single continuous doc, not a series of slides. There is no blank-slate option: get one into the editor from the start screen by uploading a `.html` file or pointing it at a public HTML URL (fetched server-side, so the page's own CORS policy does not matter), by dropping a `.html` file onto the editor, or on the CLI with `deckrun page.html`.
+Alongside Markdown decks, pulsedeck can present a second kind of document: a self-contained HTML page with no slide boundaries — a single continuous doc, not a series of slides. There is no blank-slate option: get one into the editor from the start screen by uploading a `.html` file or pointing it at a public HTML URL (fetched server-side, so the page's own CORS policy does not matter), by dropping a `.html` file onto the editor, or on the CLI with `pulsedeck page.html`.
 
 Editing is a plain source pane on the left and a live preview on the right — no syntax highlighting, gutter, guide drawer, or command palette, since there are no slide-authoring directives to catalogue. The preview updates from the textarea directly, with no server round trip.
 
 Presenting wraps the doc in an iframe and layers the tool belt that still makes sense with no slides — laser pointer, pen, blank canvas, blackout, fullscreen, and `?` for controls — on top of it. There is no HUD, slide counter, overview grid, or arrow-key navigation, since there is nothing to count or step through.
 
-A doc authored in the browser editor is expected to be self-contained: inline styles and scripts, and assets from a CDN or a `data:` URI rather than a relative local path, since editor-mode present and PDF serve it from an in-memory copy, not from a folder on disk. A file passed on the CLI does not have that restriction — `deckrun page.html` serves it from the file's own directory, exactly like a Markdown deck's images, so `<img src="diagram.png">` next to `page.html` resolves normally.
+A doc authored in the browser editor is expected to be self-contained: inline styles and scripts, and assets from a CDN or a `data:` URI rather than a relative local path, since editor-mode present and PDF serve it from an in-memory copy, not from a folder on disk. A file passed on the CLI does not have that restriction — `pulsedeck page.html` serves it from the file's own directory, exactly like a Markdown deck's images, so `<img src="diagram.png">` next to `page.html` resolves normally.
 
-If a doc runs its own script that listens for keyboard input — an embedded framework, a game, a chart with its own shortcuts — it may end up racing deckrun's own listener for a key, since both are attached to the same page. Presenter shortcuts are best-effort in that case, not guaranteed to win.
+If a doc runs its own script that listens for keyboard input — an embedded framework, a game, a chart with its own shortcuts — it may end up racing pulsedeck's own listener for a key, since both are attached to the same page. Presenter shortcuts are best-effort in that case, not guaranteed to win.
 
 ### The deck library
 
@@ -260,7 +262,7 @@ It uses a Chromium-family browser already on your machine and installs nothing. 
 
 With no such browser on the machine, the editor falls back to opening the deck with the print dialog up and says so. That route now produces the same pages, because the print stylesheet sets the page box itself.
 
-The HTML export is the same page `deckrun` serves: styles and the navigation runtime are inlined, so it opens from disk, and keyboard, touch, overview, and fullscreen all still work. Two things do not travel with it, since it is one file rather than a bundle:
+The HTML export is the same page `pulsedeck` serves: styles and the navigation runtime are inlined, so it opens from disk, and keyboard, touch, overview, and fullscreen all still work. Two things do not travel with it, since it is one file rather than a bundle:
 
 - Fonts, syntax highlighting, KaTeX, and Mermaid load from pinned CDNs in a standalone export, so a viewer needs a connection to see them exactly as you do. The theme, template, transitions, colors, and backdrop are inline.
 - Images and videos referenced by path stay on your disk. Ship them alongside, or host the page where those paths resolve.
@@ -440,7 +442,7 @@ sequenceDiagram
 
 Both render in the live preview, a presented deck, standalone HTML, and PDF.
 The editor waits for the equation or diagram before measuring slide overflow,
-and PDF rendering uses the copies installed with deckrun rather than waiting on
+and PDF rendering uses the copies installed with pulsedeck rather than waiting on
 a CDN. Invalid source stays visible as an error on the slide instead of
 silently disappearing.
 
@@ -540,7 +542,7 @@ Images with no directive stay inline, centered in the document flow and capped a
 
 ## Themes
 
-Fourteen themes, eight dark and six light. A theme is not just a palette: each
+Fifteen themes, nine dark and six light. A theme is not just a palette: each
 one brings its own display, body, and monospace faces, its own Highlight.js
 grammar colors, and its own animated geometry behind the slides.
 
@@ -554,6 +556,7 @@ grammar colors, and its own animated geometry behind the slides.
 | `rosepine`   | dark  | Rosé Pine. Muted iris and gold on plum, under a slow aurora          |
 | `forest`     | dark  | Everforest sage on deep pine, rippling in concentric rings           |
 | `neon`       | dark  | Electric cyan and magenta on true black, raked by light beams        |
+| `carbon`     | dark  | IBM Carbon Design System. Blue 60 on Gray 100, gridded and precise    |
 | `daylight`   | light | Catppuccin Latte, contrast-tuned for a projector. Dot matrix         |
 | `arctic`     | light | Nord inverted. Frost blue on cool paper, with contour waves          |
 | `solarized`  | light | The classic low-glare cream, paired with Lora for long prose         |
@@ -562,8 +565,8 @@ grammar colors, and its own animated geometry behind the slides.
 | `swiss`      | light | Black on white, one red. Heavy grotesk, tight tracking, hard grid    |
 
 ```bash
-deckrun slides.md --theme paper
-deckrun --list-themes
+pulsedeck slides.md --theme paper
+pulsedeck --list-themes
 ```
 
 `dark` and `light` are kept as aliases for `midnight` and `daylight`, so older
@@ -602,8 +605,8 @@ multiplying into fifty-six presets:
 | `xl` | x-large | Readable from the back row. Expect three or four lines a slide.  |
 
 ```bash
-deckrun slides.md --size xl
-deckrun --list-sizes
+pulsedeck slides.md --size xl
+pulsedeck --list-sizes
 ```
 
 The scale is not one multiplier over everything. Headings and prose pull in
@@ -638,9 +641,9 @@ and they are chosen **separately** — a serif heading over a sans body, or the
 reverse, is a setting rather than a fork:
 
 ```bash
-deckrun slides.md --theme tokyo --head-font playfair --body-font lora
-deckrun slides.md --body-font newsreader     # heading stays the theme's
-deckrun --list-fonts
+pulsedeck slides.md --theme tokyo --head-font playfair --body-font lora
+pulsedeck slides.md --body-font newsreader     # heading stays the theme's
+pulsedeck --list-fonts
 ```
 
 Twenty faces, grouped sans, serif, and mono: `inter`, `spaceGrotesk`, `sora`,
@@ -672,7 +675,7 @@ spacing, alignment, rules, image treatment, and the overall reading rhythm:
 
 | id          | composition                                                        |
 | ----------- | ------------------------------------------------------------------ |
-| `classic`   | The original balanced deckrun layout                              |
+| `classic`   | The original balanced pulsedeck layout                              |
 | `minimal`   | Quiet surfaces, wider margins, fewer decorative treatments        |
 | `editorial` | Strong rules and magazine-like reading rhythm                     |
 | `spotlight` | Centered, high-impact composition for concise keynote slides       |
@@ -686,9 +689,9 @@ The same menu carries five independent transitions: `slide`, `fade`, `zoom`,
 and print/PDF disables them entirely.
 
 ```bash
-deckrun slides.md --template spotlight --transition zoom
-deckrun --list-templates
-deckrun --list-transitions
+pulsedeck slides.md --template spotlight --transition zoom
+pulsedeck --list-templates
+pulsedeck --list-transitions
 ```
 
 ### Type and motion
@@ -829,7 +832,7 @@ Present **from the editor** (`Cmd+Enter`) and the deck opens in its own tab; the
 - The link is live: it survives a reload of either tab.
 - The notes shown are the slide's `<!-- notes: ... -->`, the same text the audience never sees.
 
-A deck run straight from a file has no editor to follow it; present it through the editor instead (`deckrun`, then drag the file onto it, then `Cmd+Enter`) to get the notes during the talk.
+A deck run straight from a file has no editor to follow it; present it through the editor instead (`pulsedeck`, then drag the file onto it, then `Cmd+Enter`) to get the notes during the talk.
 
 ## Visual design
 
@@ -854,19 +857,19 @@ From the editor, press `Cmd Shift S` or pick PDF from the `export` menu, and a f
 Loading any deck with `?print=1` on the URL opens the print dialog once fonts and highlighting have settled. That is the editor's fallback when there is no browser to drive, and it works on a file-backed deck too:
 
 ```bash
-deckrun slides.md --no-open
+pulsedeck slides.md --no-open
 # then open http://127.0.0.1:7890/?print=1
 ```
 
 ## Local asset server
 
-`deckrun` serves the generated HTML at `/` and everything else relative to the directory holding the Markdown file. In editor mode there is no Markdown file, so it serves the directory you launched in. Local images, diagrams, videos, and fonts load over `http://` instead of `file://`, which avoids CORS restrictions on local assets.
+`pulsedeck` serves the generated HTML at `/` and everything else relative to the directory holding the Markdown file. In editor mode there is no Markdown file, so it serves the directory you launched in. Local images, diagrams, videos, and fonts load over `http://` instead of `file://`, which avoids CORS restrictions on local assets.
 
 - Served types include HTML, CSS, JS, JSON, PNG, JPEG, GIF, SVG, WebP, AVIF, ICO, MP4, WebM, WOFF, WOFF2, and TTF. Anything else is sent as `application/octet-stream`.
 - Requests that resolve outside the Markdown file's directory return `403`. Missing files return `404`.
 - If the requested port is taken, the server falls back to a random free port and prints the URL it settled on.
 
-KaTeX and Mermaid are served from the copies installed with deckrun, which
+KaTeX and Mermaid are served from the copies installed with pulsedeck, which
 keeps live preview and PDF rendering independent of the network. Google Fonts,
 Highlight.js, and the pet sprites still load from CDNs, so a first run needs
 network access for those visual extras.
@@ -875,7 +878,7 @@ network access for those visual extras.
 
 ### Markdown decks
 
-Any tool that writes Markdown can write a `deckrun` deck. If you use Claude Code, the `blog-to-slides` skill turns a blog post, article, or long-form note into a deck in exactly this format: `---` separators, `## Title` per slide, language-tagged code blocks, and ASCII diagrams where a picture beats a paragraph.
+Any tool that writes Markdown can write a `pulsedeck` deck. If you use Claude Code, the `blog-to-slides` skill turns a blog post, article, or long-form note into a deck in exactly this format: `---` separators, `## Title` per slide, language-tagged code blocks, and ASCII diagrams where a picture beats a paragraph.
 
 ```text
 turn https://arpitbhayani.me/blogs/wal into slides
@@ -884,13 +887,13 @@ turn https://arpitbhayani.me/blogs/wal into slides
 Then present the file it writes:
 
 ```bash
-deckrun wal-slides.md
+pulsedeck wal-slides.md
 ```
 
 Or open the editor and drop the file onto it, which is the faster loop when you still want to cut a few slides:
 
 ```bash
-deckrun
+pulsedeck
 ```
 
 The skill is a personal Claude Code skill and is not bundled with this package. Add it under `~/.claude/skills/blog-to-slides/SKILL.md` to make it available across projects.
@@ -900,7 +903,7 @@ from generated Markdown render as diagrams as well.
 
 ### HTML documents
 
-For a self-contained HTML doc instead of a Markdown deck, use the [`ape-present`](https://github.com/arpitbbhayani/ape-skills) skill. It turns a blog post into a single presentation-worthy HTML page — a readable long-form document with animated diagrams and just enough text to carry the idea — which is exactly the kind of doc `deckrun`'s presenter mode is built for.
+For a self-contained HTML doc instead of a Markdown deck, use the [`ape-present`](https://github.com/arpitbbhayani/ape-skills) skill. It turns a blog post into a single presentation-worthy HTML page — a readable long-form document with animated diagrams and just enough text to carry the idea — which is exactly the kind of doc `pulsedeck`'s presenter mode is built for.
 
 ```text
 ape present https://arpitbhayani.me/blogs/wal
@@ -909,7 +912,7 @@ ape present https://arpitbhayani.me/blogs/wal
 Then present the page it writes:
 
 ```bash
-deckrun wal.html
+pulsedeck wal.html
 ```
 
 Like `blog-to-slides`, this is a personal Claude Code skill from the same [ape-skills](https://github.com/arpitbbhayani/ape-skills) collection and is not bundled with this package.
@@ -985,16 +988,16 @@ Two decks ship in `examples/`:
 
 ```bash
 # Run the feature showcase deck
-deckrun examples/example-1.md
+pulsedeck examples/example-1.md
 
 # Or open the editor and drag either file onto it to edit
-deckrun
+pulsedeck
 
 # Run the technical talk in light theme on port 3000
-deckrun examples/example-2.md -p 3000 --theme solarized --size l
+pulsedeck examples/example-2.md -p 3000 --theme solarized --size l
 
 # Run fullscreen without opening a browser
-deckrun examples/example-1.md --fullscreen --no-open
+pulsedeck examples/example-1.md --fullscreen --no-open
 ```
 
 ## Not supported yet
@@ -1032,7 +1035,7 @@ The source:
 - `src/themes.ts` is the theme registry and the type scale: palettes, font catalog, backdrop patterns, size presets, and the CSS they all emit
 - `src/presentation-options.ts` is the composition-template and transition registry
 - `src/fragments.ts` contains incremental-reveal styles and DOM preparation shared by preview and presentation
-- `src/lint.ts` implements the static deck authoring rules behind `deckrun lint`
+- `src/lint.ts` implements the static deck authoring rules behind `pulsedeck lint`
 - `src/rich-content.ts` detects and renders KaTeX and Mermaid content, with a shared readiness signal
 - `src/generate.ts` holds the slide CSS, the presenter chrome, and the deck runtime
 - `src/preview.ts` is the editor's preview iframe, sharing the slide CSS with the deck
