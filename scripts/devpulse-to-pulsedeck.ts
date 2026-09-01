@@ -40,7 +40,13 @@ interface DevpulseItem {
   type: string;
   platform: string;
   tags: string[];
-  score: number;
+  /**
+   * `items.score` is `NUMERIC(8,2)` in Postgres, and node-postgres returns
+   * `NUMERIC` as a string to avoid float precision loss — confirmed against
+   * a real `GET /api/topics/:slug` response (`"score":"91.50"`, not `91.5`).
+   * Always read this through `scoreOf`, never compare or format it directly.
+   */
+  score: number | string;
   is_bookmarked: boolean;
   published_at: string | null;
   fetched_at: string;
@@ -127,6 +133,12 @@ function formatDate(iso: string | null): string {
   return d.toISOString().slice(0, 10);
 }
 
+/** `item.score` arrives as a string from Postgres `NUMERIC` — see the field's doc comment. */
+function scoreOf(item: DevpulseItem): number {
+  const n = Number(item.score);
+  return Number.isFinite(n) ? n : 0;
+}
+
 function groupByType(items: DevpulseItem[]): Map<string, DevpulseItem[]> {
   const groups = new Map<string, DevpulseItem[]>();
   for (const item of items) {
@@ -135,7 +147,7 @@ function groupByType(items: DevpulseItem[]): Map<string, DevpulseItem[]> {
     groups.get(key)!.push(item);
   }
   for (const list of groups.values()) {
-    list.sort((a, b) => (b.score ?? 0) - (a.score ?? 0));
+    list.sort((a, b) => scoreOf(b) - scoreOf(a));
   }
   return groups;
 }
@@ -146,7 +158,7 @@ function renderGroupSlide(type: string, items: DevpulseItem[], perGroup: number)
     .map((item) => {
       const title = mdEscape(truncate(item.title, 90));
       const source = mdEscape(item.source_name || item.platform || "");
-      const score = Number.isFinite(item.score) ? item.score.toFixed(0) : "—";
+      const score = scoreOf(item).toFixed(0);
       const date = formatDate(item.published_at);
       return `| [${title}](${item.url}) | ${source} | ${score} | ${date} |`;
     })

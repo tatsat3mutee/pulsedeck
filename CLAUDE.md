@@ -105,6 +105,17 @@ label map, not guessed). A type outside that set still gets a readable
 Title Case group label rather than failing, so schema drift degrades
 gracefully instead of breaking the export.
 
+Validated against the real endpoint (backend run locally against a seeded
+Postgres, since the live deployment is outside this environment's egress
+allowlist): the response shape matches exactly, and one real bug was caught
+and fixed this way — `items.score` is Postgres `NUMERIC(8,2)`, which
+`node-postgres` returns as a *string* (`"91.50"`, not `91.5`). The exporter
+read it as a `number` and silently rendered every score as `—`; it now goes
+through `scoreOf()`, which coerces before comparing or formatting. A
+hand-written JSON fixture with numeric literals would never have caught
+this — it takes a real Postgres response to surface a driver-level
+serialization quirk.
+
 ### CI lint workflow
 
 `.github/workflows/lint-decks.yml` runs `pulsedeck lint` (via
