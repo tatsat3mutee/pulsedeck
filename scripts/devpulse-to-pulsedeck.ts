@@ -31,6 +31,7 @@
  */
 
 import { readFileSync, writeFileSync } from "fs";
+import { pathToFileURL } from "url";
 
 interface DevpulseItem {
   id: number;
@@ -240,7 +241,12 @@ async function main() {
   }
 }
 
-const isMain = process.argv[1] && import.meta.url === `file://${process.argv[1]}`;
+// `file://${process.argv[1]}` breaks on Windows: argv[1] is backslash-separated
+// (`C:\...`) while import.meta.url is always a forward-slash file:// URL
+// (`file:///C:/...`), so the two never match and this entry-point check
+// silently evaluates to false — main() never runs, with no error printed.
+// pathToFileURL normalizes both platforms' paths into the same URL shape.
+const isMain = process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href;
 if (isMain) {
   main().catch((err) => {
     console.error(err instanceof Error ? err.message : err);
