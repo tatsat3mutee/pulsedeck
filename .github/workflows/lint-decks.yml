@@ -1,0 +1,42 @@
+name: lint decks
+
+on:
+  push:
+    paths:
+      - "decks/**/*.md"
+      - "src/**"
+      - ".github/workflows/lint-decks.yml"
+  pull_request:
+    paths:
+      - "decks/**/*.md"
+      - "src/**"
+      - ".github/workflows/lint-decks.yml"
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - run: npm ci
+
+      - run: npm run build
+
+      # `pulsedeck lint` takes a list of files (`<files...>`), not a
+      # self-expanding glob, and GitHub's runners don't enable bash's
+      # globstar by default — so build the file list with `find` rather
+      # than assuming `decks/**/*.md` expands on its own.
+      - name: Lint every deck in decks/
+        run: |
+          mapfile -t decks < <(find decks -name '*.md' ! -name 'README.md' | sort)
+          if [ "${#decks[@]}" -eq 0 ]; then
+            echo "No decks found under decks/ — nothing to lint."
+            exit 0
+          fi
+          echo "Linting ${#decks[@]} deck(s):"
+          printf '  %s\n' "${decks[@]}"
+          node dist/index.js lint "${decks[@]}"
